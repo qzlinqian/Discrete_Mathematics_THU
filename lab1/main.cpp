@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <list>
 
 // To convert a directed graph with weight to incidence matrix, edge listing, positive direction table and adjacency list
 
@@ -10,7 +11,6 @@ int main() {
 	input.open("input.txt", ios::in);
 	int n, m = 0;
 	input >> n;
-//	cout << n <<endl;
 	int *weight = new int[n * n];
 	// Do NOT new a n*n matrix. That's disgusting.
 	for (int i = 0; i < n * n; i++) {
@@ -30,10 +30,13 @@ int main() {
 	int *positive = new int[2 * m];
 	int ite = 0;
 	// adjacency list
-	int *adjacent = new int[2 * m + n];
-	int adIte = 0, flag = 0;
-	for (int i = 0; i < n * n; i++){
-		if (weight[i] > 0){
+	list<int> *adjacent = new list<int>[n];
+	for (int i = 0; i < n * n; i++) {
+		// positiveHead should also be updated even there's no positive edge from a point.
+		if (positiveHead[i / n] == 0)
+			positiveHead[i / n] = ite + 1; // not +1 when output
+
+		if (weight[i] > 0) {
 			incidence[(i / n) * m + ite] = 1;
 			incidence[(i % n) * m + ite] = -1;
 
@@ -41,17 +44,11 @@ int main() {
 			edgeList[ite + m] = i % n + 1;
 			edgeList[ite + 2 * m] = weight[i];
 
-			if (positiveHead[i / n] == 0)
-				positiveHead[i / n] = ite + 1; // not +1 when output
 			positive[ite] = i % n + 1;  // Not +1 when output
 			positive[ite + m] = weight[i];
 
-			if ((i / n) != flag) {
-				flag++;
-				adjacent[adIte++] = 0;
-			}
-			adjacent[adIte++] = weight[i];
-			adjacent[adIte++] = i % n + 1;
+			adjacent[i / n].push_back(weight[i]);
+			adjacent[i / n].push_back(i % n + 1);
 
 			ite++;
 		}
@@ -59,15 +56,14 @@ int main() {
 
 	ofstream output;
 	output.open("output.txt", ios::out);
-
-	for (int i = 0; i < n * m;){
+	for (int i = 0; i < n * m;) {
 		output << incidence[i++] << " ";
 		if (i % n == 0)
 			output << "\n";
 	}
 	delete[] incidence;
 
-	for (int i = 0; i < 3 * m;){
+	for (int i = 0; i < 3 * m;) {
 		output << edgeList[i++] << " ";
 		if (i % m == 0) {
 			output << "\n";
@@ -89,15 +85,14 @@ int main() {
 	delete[] positive;
 
 	output << "\n";
-	for (int i = 0; i < 2 * m + n; i++) {
-		if (adjacent[i] == 0){
-			output << "\n";
-		} else {
-			output << adjacent[i] << " ";
+	for (int i = 0; i < n; i++) {
+		while (!adjacent[i].empty()) {
+			output << adjacent[i].front() << " ";
+			adjacent[i].pop_front();
 		}
+		output << "\n";
 	}
 	delete[] adjacent;
-	output << "\n";
 	output.close();
 
 	return 0;
