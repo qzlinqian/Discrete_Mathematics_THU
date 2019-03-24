@@ -1,2 +1,6 @@
 output
 reqs
+failed
+.idea
+cmake-build-debug
+CMakeLists.txt
