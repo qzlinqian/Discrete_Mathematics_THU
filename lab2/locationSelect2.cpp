@@ -5,7 +5,7 @@
 #define MAX_ROAD 2000000
 
 int m,n;
-int* weight, *maxDis;
+int* weight, *maxDis, *maxDisNode;
 
 struct Edge{
     int startPoint;
@@ -46,6 +46,10 @@ double search(int edgeNum){
     int startPos = edges[edgeNum].startPoint;
     int endPos = edges[edgeNum].endPoint;
     int time = edges[edgeNum].weight;
+    // For the node x=maxDisNode[endPos], distance(x, endPos) >= minInAll (already) and distance(x, startPos) >= minInAll,
+    // so we can just skip it.
+    if (weight[startPos*n+maxDisNode[endPos]] >= minInAll || weight[endPos*n+maxDisNode[startPos]] >= minInAll)
+        return minInAll;
     double tempMax, minMax = minInAll;
     double k = 0.5;
     while (k<time){
@@ -59,6 +63,8 @@ double search(int edgeNum){
 
             if (newDis > tempMax)
                 tempMax = newDis;
+            if (tempMax > minMax) // No need to dig further for this k
+                break;
         }
 
         if (minMax > tempMax)
@@ -73,6 +79,7 @@ int main(){
     weight = new int[n*n];
     edges = new Edge[m];
     maxDis = new int[n]();  // init with 0
+    maxDisNode = new int[n];
     minInAll = MAX_ROAD;
     //std::fill(&weight[0], &weight[n*n-1], MAX_ROAD);
     int u, v, t;
@@ -89,8 +96,10 @@ int main(){
 
     for (int i=0;i<n;i++){
         for (int j=0;j<n;j++){
-            if (weight[i*n+j] > maxDis[i])
+            if (weight[i*n+j] > maxDis[i]) {
                 maxDis[i] = weight[i*n+j];
+                maxDisNode[i] = j;
+            }
         }
         if (minInAll > maxDis[i])
             minInAll = maxDis[i];
@@ -102,7 +111,10 @@ int main(){
             minInAll = temp;
     }
 
-    printf("%.1f\n",minInAll);
+    if ((minInAll-(int)minInAll) < 0.1f)
+        printf("%.0f\n", minInAll);
+    else
+        printf("%.1f\n",minInAll);
 
     delete[] weight;
     return 0;
