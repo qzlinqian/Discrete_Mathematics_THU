@@ -2,6 +2,7 @@
 //#include <list>
 #include <vector>
 #include <stack>
+#include <queue>
 
 int main(){
     int n;
@@ -12,7 +13,7 @@ int main(){
     std::vector<int> sons[n];
     int directFathers[n];
     int endTime[n];
-    std::stack<int> waitingList;
+    std::queue<int> waitingList;
     int lastEnded = -1, totalTime = 0;
     bool confluence[n+1];
     confluence[n] = false;
