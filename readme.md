@@ -1,0 +1,6 @@
+## Discrete Mathematics — Graph Theory
+
+This repo maintains the first two assignments of Discrete Mathematics (Graph Theory), THU 2019 Spring. ( I have signed an honor code for the last assignment not to public my code, so I erased the history of lab3.)
+
+* The first assignment was a implementation of different expression forms of a graph. A noticeable problem I encountered was to handle the edge cases, e.g., when there is no edge but only vertexes in a graph. The detailed readme was written in Chinese.
+* The second assignment was very interesting and a little hard. The *courses.cpp* is an incompleted solution to a process problem. Because there might be multiple critical paths, I had a hard time to track back after traverse the whole graph. The *locationSelect.cpp* is a solution on how to select a vertex in a graph that has a minimum sum of the distance to other vertexes. In *locationSelect.cpp*, the selectable places are not limited within the vertex, but also include any points on each edge. Here I noticed that because the distance of each edge is integer, the distance between the point selected and a vertex of the edge where the point locates should only be an integer or (integer+0.5). So I went through the possible edges with a step of 0.5 and cut down some unnecessary calculations to save time.
